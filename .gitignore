@@ -6,6 +6,9 @@
 .pnp.js
 /.env.production
 /.env.development
+/combined.log
+/error.JSON
+/info.JSON
 # testing
 /coverage
 

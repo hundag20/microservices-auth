@@ -1,5 +1,6 @@
 var http = require("http");
 const express = require("express");
+const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const auth = require("./controllers/auth.controller");
@@ -40,7 +41,7 @@ app.get("/v1/logs", cors(), (req, res) => {
 app.get("/v1/login", cors(), auth.login);
 app.post("/v1/addUser", cors(), addUser);
 
-http.createServer(app).listen(3001, (err) => {
+http.createServer(app).listen(3002, (err) => {
   if (err) logger("error", err);
   else logger("info", "login micro-service running on 3001");
 });
