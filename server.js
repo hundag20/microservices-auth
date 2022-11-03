@@ -30,18 +30,18 @@ app.get("/v1/logs", cors(), (req, res) => {
   });
   res.send(content);
 });
-app.get("/v1/env", cors(), (req, res) => {
-  const content = fs.readFileSync(`./.env.production`, {
-    encoding: "utf8",
-    flag: "r",
-  });
-  res.send(content);
-});
+// app.get("/v1/env", cors(), (req, res) => {
+//   const content = fs.readFileSync(`./.env.production`, {
+//     encoding: "utf8",
+//     flag: "r",
+//   });
+//   res.send(content);
+// });
 
 app.get("/v1/login", cors(), auth.login);
 app.post("/v1/addUser", cors(), addUser);
 
-http.createServer(app).listen(3002, (err) => {
+http.createServer(app).listen(3001, (err) => {
   if (err) logger("error", err);
   else logger("info", "login micro-service running on 3001");
 });

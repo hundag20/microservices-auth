@@ -1,5 +1,6 @@
 const md5 = require("md5");
 const SystUser = require("../models/SystUser.model");
+const logger = require("./logger");
 
 const addUser = async (req, res) => {
   try {
@@ -14,6 +15,8 @@ const addUser = async (req, res) => {
       message: "success",
     });
   } catch (err) {
+    if (err.message) logger("error", err.message);
+    else logger("error", err);
     return res.status(500).send({
       error: err,
     });
