@@ -1,6 +1,6 @@
 // Update with your config settings.
 const dotenv = require("dotenv");
-dotenv.config({ path: "./env.env" });
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
@@ -14,7 +14,7 @@ module.exports = {
       password: process.env.DB_PASSWORD,
     },
     seeds: {
-      directory: "./seeds/",
+      directory: "./seeds",
     },
   },
 
@@ -30,7 +30,7 @@ module.exports = {
       tableName: "knex_migrations",
     },
     seeds: {
-      directory: "./seeds/init_list",
+      directory: "./seeds",
     },
   },
 
@@ -47,7 +47,7 @@ module.exports = {
       path: "./",
     },
     seeds: {
-      directory: "./seeds/init_list",
+      directory: "./seeds",
     },
   },
 };

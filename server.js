@@ -22,6 +22,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.static(path.join(__dirname, 'static')));
 
+app.get("/v1/logs", cors(), (req, res) => {
+  const content = fs.readFileSync(`./combined.log`, {
+    encoding: "utf8",
+    flag: "r",
+  });
+  res.send(content);
+});
+// app.get("/v1/env", cors(), (req, res) => {
+//   const content = fs.readFileSync(`./.env.production`, {
+//     encoding: "utf8",
+//     flag: "r",
+//   });
+//   res.send(content);
+// });
+
 app.get("/v1/login", cors(), auth.login);
 app.post("/v1/addUser", cors(), addUser);
 
