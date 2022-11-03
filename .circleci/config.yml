@@ -1,21 +1,55 @@
-# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
-
-# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
-# See: https://circleci.com/docs/2.0/orb-intro/
-orbs:
-  node: circleci/node@4.7
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+executors:
+  docker-publisher:
+    docker:
+      - image: docker:17.05.0-ce-git
+jobs:
+  build:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: inject env variable into dotenv file 
+          command: |
+            touch .env.production
+            echo -e "SERVER_HOST=$SERVER_HOST\nSERVER_PORT=$SERVER_PORT\nSERVER_USERNAME=$SERVER_USERNAME\nARCHIVE_LOCATION=$ARCHIVE_LOCATION\nSERVER_PASSWORD=$SERVER_PASSWORD\n" > .env.production
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $IMAGE_NAME . 
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+  publish-latest:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish Docker Img to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASS"
+            docker push $IMAGE_NAME
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  version: 2
+  build-main:
     jobs:
-      - node/test:
-          # This is the node version to use for the `cimg/node` tag
-          # Relevant tags can be found on the CircleCI Developer Hub
-          # https://circleci.com/developer/images/image/cimg/node
-          version: '16.10'
-          # If you are using yarn, change the line below from "npm" to "yarn"
-          pkg-manager: npm
+      - build:
+          filters:
+            branches:
+              only: main 
+      - publish-latest:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
