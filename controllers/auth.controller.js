@@ -4,6 +4,7 @@ const SystUser = require("../models/SystUser.model");
 
 const md5 = require("md5");
 const dotenv = require("dotenv");
+const logger = require("./logger");
 
 dotenv.config();
 
@@ -41,7 +42,7 @@ const login = async (req, res, next) => {
   const userName = req.query.username;
   const password = req.query.password;
   //FIXME: REMINDER: [plain] password showing on url
-  console.log("FIXME: REMINDER: [plain] password showing on url");
+  logger("info", "FIXME: REMINDER: [plain] password showing on url");
   if (!userName || !password) {
     return res.status(400).send({
       status: 400,
@@ -86,7 +87,7 @@ const login = async (req, res, next) => {
       accessToken: token,
     });
   } catch (err) {
-    console.log(err);
+    logger("error", err);
     res.status(500).send({
       status: 500,
       error: err.message,
@@ -126,15 +127,16 @@ const resetPwd = async (req, res, next) => {
         .then(() => {
           res.render("resetSuccess");
         })
-        .catch((e) => {
-          console.log(e);
+        .catch((err) => {
+          logger("error", err);
           return res.status(500).send({
             message: "something went wrong",
           });
         });
     });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    logger("error", err);
+
     return res.status(500).send({
       message: "something went wrong",
     });
@@ -172,15 +174,15 @@ const resetPwd2 = async (req, res, next) => {
         .then(() => {
           res.render("resetSuccess");
         })
-        .catch((e) => {
-          console.log(e);
+        .catch((err) => {
+          logger("error", err);
           return res.status(500).send({
             message: "something went wrong",
           });
         });
     });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    logger("error", err);
     return res.status(500).send({
       message: "something went wrong",
     });

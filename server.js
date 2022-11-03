@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const auth = require("./controllers/auth.controller");
 const addUser = require("./controllers/addUser.controller");
+const logger = require("./controllers/logger");
 
 const app = express();
 
@@ -25,8 +26,8 @@ app.get("/v1/login", cors(), auth.login);
 app.post("/v1/addUser", cors(), addUser);
 
 http.createServer(app).listen(3001, (err) => {
-  if (err) console.log("err", err);
-  console.log("login micro-service running on 3001");
+  if (err) logger("error", err);
+  else logger("info", "login micro-service running on 3001");
 });
 module.exports = app;
 
