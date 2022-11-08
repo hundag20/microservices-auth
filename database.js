@@ -1,7 +1,5 @@
 const { Model } = require("objection");
 const Knex = require("knex");
-const dotenv = require("dotenv");
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 const conn_string = {
   server: process.env.DB_SERVER,

@@ -3,10 +3,8 @@ const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const auth = require("./controllers/auth.controller");
-const addUser = require("./controllers/addUser.controller");
 const logger = require("./controllers/logger");
-
+const adAuth = require("./controllers/adAuth.controller");
 const app = express();
 
 app.use(function (req, res, next) {
@@ -38,8 +36,9 @@ app.get("/v1/logs", cors(), (req, res) => {
 //   res.send(content);
 // });
 
-app.get("/v1/login", cors(), auth.login);
-app.post("/v1/addUser", cors(), addUser);
+// app.get("/v1/login", cors(), auth.login);
+app.get("/v1/login", cors(), adAuth.login);
+app.get("/v1/verify", cors(), adAuth.verify);
 
 http.createServer(app).listen(3001, (err) => {
   if (err) logger("error", err);
