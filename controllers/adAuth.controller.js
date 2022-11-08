@@ -31,7 +31,6 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
-console.log(config);
 const login = async (req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*");
   let userName = req.query.username;
