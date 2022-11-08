@@ -12,9 +12,13 @@ const ad = new ActiveDirectory(config);
 
 //authenticate
 const verifyToken = (req, res, next) => {
-  let token = req.query.x_access_token;
+  let token = req.body.x_access_token;
 
   if (!token) {
+    logger(
+      "info",
+      "verification failed because token was missing from request"
+    );
     return res.status(403).send({
       message: "No token provided!",
     });
@@ -22,21 +26,31 @@ const verifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.SECRET, (err, decoded) => {
     if (err) {
+      logger("info", "verification failed");
       return res.status(401).send({
-        message: "Unauthorized!",
+        message: "token verification failed",
       });
     }
-    req.uname = decoded.uname;
-    req.role = decoded.role;
-    next();
+
+    //return token and user data
+    res.status(200).send({
+      userData: {
+        name: decoded.uname,
+        role: decoded.role,
+      },
+      accessToken: token,
+    });
+    return logger(
+      "info",
+      `sucessfull token verification for username: ${decoded.uname}`
+    );
   });
 };
 const login = async (req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*");
-  let userName = req.query.username;
-  const password = req.query.password;
-  //FIXME: REMINDER: [plain] password showing on url
-  logger("info", "FIXME: REMINDER: [plain] password showing on url");
+  let userName = req.body.username;
+  const password = req.body.password;
+
   if (!userName || !password) {
     return res.status(400).send({
       status: 400,

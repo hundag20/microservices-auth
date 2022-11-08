@@ -37,8 +37,8 @@ app.get("/v1/logs", cors(), (req, res) => {
 // });
 
 // app.get("/v1/login", cors(), auth.login);
-app.get("/v1/login", cors(), adAuth.login);
-app.get("/v1/verify", cors(), adAuth.verify);
+app.post("/v1/login", adAuth.login);
+app.post("/v1/verify", adAuth.verify);
 
 http.createServer(app).listen(3001, (err) => {
   if (err) logger("error", err);
