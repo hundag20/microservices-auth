@@ -45,7 +45,3 @@ http.createServer(app).listen(3001, (err) => {
   else logger("info", "login micro-service running on 3001");
 });
 module.exports = app;
-
-/*
-TODO: validate token on requests
-*/
