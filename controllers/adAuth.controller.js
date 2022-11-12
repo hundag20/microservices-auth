@@ -93,6 +93,9 @@ const login = async (req, res, next) => {
                 case "Human Resource Department":
                   role = "hr";
                   break;
+                case "Aftersales Department":
+                  role = "service";
+                  break;
               }
             });
 
