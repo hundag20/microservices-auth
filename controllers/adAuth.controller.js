@@ -70,45 +70,57 @@ const login = async (req, res, next) => {
         let role,
           displayName = "";
         ad.findUser(userName, function (err, user) {
-          if (err) {
-            console.log("ERROR: " + JSON.stringify(err));
-            return;
-          }
-
-          if (!user) throw `User:  ${userName} not found.`;
-          let userinfo = user.dn.split(",");
-          displayName = user.displayName;
-          const reg = new RegExp(/^OU=/);
-          let ou = userinfo.filter((el) => reg.test(el));
-          ou = ou.map((el) => el.split("=")[1]);
-          ou.forEach((el) => {
-            switch (el) {
-              case "IT Admin":
-                role = "admin";
-                break;
-              case "Finance Department":
-                role = "finance";
-                break;
-              case "Human Resource Department":
-                role = "hr";
-                break;
+          try {
+            if (err) {
+              console.log("ERROR: " + JSON.stringify(err));
+              return;
             }
-          });
 
-          // create new token
-          var token = jwt.sign({ uname: userName, role }, process.env.SECRET, {
-            expiresIn: 86400, //token will expire in 24 hours
-          });
+            if (!user) throw `User:  ${userName} not found.`;
+            let userinfo = user.dn.split(",");
+            displayName = user.displayName;
+            const reg = new RegExp(/^OU=/);
+            let ou = userinfo.filter((el) => reg.test(el));
+            ou = ou.map((el) => el.split("=")[1]);
+            ou.forEach((el) => {
+              switch (el) {
+                case "IT Admin":
+                  role = "admin";
+                  break;
+                case "Finance Department":
+                  role = "finance";
+                  break;
+                case "Human Resource Department":
+                  role = "hr";
+                  break;
+              }
+            });
 
-          //return token and user data
-          res.status(200).send({
-            userData: {
-              name: displayName,
-              role,
-            },
-            accessToken: token,
-          });
-          return logger("info", `sucessfull login for username: ${userName}`);
+            // create new token
+            var token = jwt.sign(
+              { uname: userName, role },
+              process.env.SECRET,
+              {
+                expiresIn: 86400, //token will expire in 24 hours
+              }
+            );
+
+            //return token and user data
+            res.status(200).send({
+              userData: {
+                name: displayName,
+                role,
+              },
+              accessToken: token,
+            });
+            return logger("info", `sucessfull login for username: ${userName}`);
+          } catch (err) {
+            logger("error", err);
+            res.status(500).send({
+              status: 500,
+              error: err,
+            });
+          }
         });
       } else {
         logger("info", `Authentication failed for username: ${userName}`);
