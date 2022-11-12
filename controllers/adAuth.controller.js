@@ -75,7 +75,7 @@ const login = async (req, res, next) => {
             return;
           }
 
-          if (!user) console.log("User: " + sAMAccountName + " not found.");
+          if (!user) console.log("User: " + userName + " not found.");
           let userinfo = user.dn.split(",");
           displayName = user.displayName;
           const reg = new RegExp(/^OU=/);
