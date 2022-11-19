@@ -3,8 +3,10 @@ const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const auth = require("./controllers/auth.controller");
+const addUser = require("./controllers/addUser.controller");
 const logger = require("./controllers/logger");
-const adAuth = require("./controllers/adAuth.controller");
+
 const app = express();
 
 app.use(function (req, res, next) {
@@ -15,12 +17,10 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.static(path.join(__dirname, 'static')));
-
 app.get("/v1/logs", cors(), (req, res) => {
   const content = fs.readFileSync(`./combined.log`, {
     encoding: "utf8",
@@ -36,12 +36,14 @@ app.get("/v1/logs", cors(), (req, res) => {
 //   res.send(content);
 // });
 
-// app.get("/v1/login", cors(), auth.login);
-app.post("/v1/login", adAuth.login);
-app.post("/v1/verify", adAuth.verify);
+app.get("/v1/login", cors(), auth.login);
+app.post("/v1/addUser", cors(), addUser);
 
 http.createServer(app).listen(3001, (err) => {
   if (err) logger("error", err);
   else logger("info", "login micro-service running on 3001");
 });
 module.exports = app;
+/*
+TODO: validate token on requests
+*/
